@@ -8,8 +8,18 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 // Set static folder
-app.use(express.static(path.join(__dirname, 'public')));
+app.use (express.static(path.join(__dirname, 'public')));
 
+// Run when a client connects
+io.on('connection', socket => {
+    console.log('New Web Socket Connection');
+
+    // Run when user disconnects
+    socket.on('disconnect', () => {
+        io.emit('message', 'User has disconnects');
+        console.log('User disconnected');
+    });
+});
 
 const port = 3000 || process.env.port;
 
