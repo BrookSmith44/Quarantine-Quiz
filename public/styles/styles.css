@@ -1,0 +1,294 @@
+* {
+    margin: 0;
+    border: 0;
+    padding: 0;
+    font-family: 'Roboto Mono', monospace;
+    
+  }
+  
+  #index-wrapper {
+    width: 100%;
+    height: 100vh;
+    background-color: pink;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .userForm {
+    width: 40%;
+    height: 30%;
+    padding: 1%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  }
+  
+  .userForm h2 {
+    width: 20%;
+    align-self: center;
+    font-size: 2em;
+    color: pink;
+  }
+  
+  .userForm .userInput {
+    width: 80%;
+    height: 40px;
+    font-size: 1.5em;
+    border-bottom: 5px solid pink;
+    margin-left: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .userForm .userSubmit {
+    width: 25%;
+    height: 15%;
+    background-color: pink;
+    color: white;
+    cursor: pointer;
+    font-size: 1.5em;
+    margin-left: 20px;
+    transition: 0.5s background-color, color, border;
+  }
+
+  .btn {
+    height: 30px;
+  }
+
+  .userSubmit:hover{
+    background-color: white;
+    color: pink;
+    border: 1px solid pink;
+  }
+
+  .user-container {
+    width: 100%;
+    height: 50%;
+    display: none;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .userArea {
+    max-width: 80%;
+    display: flex;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    flex-direction: column;
+  }
+
+  .userArea .users {
+    height: 90%;
+    height: 50%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 2%;
+  }
+
+  .userArea #ready {
+    height: 10%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: flex-end;
+  }
+
+  .chat-container {
+    width: 100%;
+    height: 50%;
+    display: none;
+    justify-content: flex-end; 
+    flex-direction: column;
+    align-items: center;
+
+  }
+
+  #chat-form {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: 10%;
+    background-color: white;
+  }
+
+  #chat-form input {
+    width: 90%;
+    border-top: 2px solid pink;
+    border-bottom: 2px solid pink;
+  }
+
+  #chat-form button {
+    width: 10%;
+    background-color: pink;
+    color: white;
+  }
+
+  #chat-main {
+    height: 100%;
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    border-radius: 5px;
+    margin-bottom: 20px;
+  }
+
+  .messages {
+    overflow-y: scroll;
+    height: 100%;
+  }
+  
+  .msg {
+    background-color: pink;
+    color: white;
+  }
+
+  .user {
+    border-radius: 5px;
+    border-bottom: 10px solid pink;
+    font-size: 1em;
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+    font-size: 1.5em;
+    font-weight: bold;
+  }
+
+  .btn {
+    cursor: pointer;
+  }
+
+  /* Create round */
+  #create-container {
+    background-color: white;
+    width: 60%;
+    display: none;
+    max-height: 80%;
+    border-radius: 5px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);  
+  }
+
+  #create-round {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    background-color: white;
+  }
+
+  #create-round h1 {
+    margin-bottom: 2%;
+  }
+
+  #create-round h1, #create-round h3 {
+    color: pink;
+  }
+
+  #create-round h1 {
+    margin-left: 20px;
+  }
+
+  .questions {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 5%;
+    margin-left: 20px;
+  }
+
+  #additional-question {
+    height: 100%;
+    overflow-y: scroll;
+  }
+
+.question-input {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+  #question {
+    width: 80%;
+    border-bottom: 2px solid pink;
+    font-size: 1.1em;
+    margin-bottom: 5%;
+  }
+
+  .questions #marks {
+    width: 40px;
+  }
+
+  .marks {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 5%;
+    margin-bottom: 5%;
+  }
+
+  .asn-options {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .option {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+  }
+
+  .option label {
+    margin-left: 20px;
+  }
+
+  .question-btns {
+    width: 100%;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: flex-end;
+    align-self: flex-end;
+  }
+
+  .btn {
+    background-color: pink;
+    color: white;
+    padding: 5px;
+  }
+
+  #btnAdd {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 2px;
+  }
+
+  /* Show number arrows always */
+  input[type=number]::-webkit-inner-spin-button {
+    opacity: 1
+}

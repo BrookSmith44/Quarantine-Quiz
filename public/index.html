@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="styles/styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Poiret+One" rel="stylesheet">
+    <!-- Compiled and minified CSS -->
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">-->
+    <title>Quarantine Quiz</title>
+  </head>
+  <body>
+    <header>
+     </header>
+     <div id="index-wrapper">
+        <form class="userForm" id="userForm" action="" method="get">
+      
+          <h2>Username</h2>
+          <input id="userInput" class="userInput" type="text" name="username" value=""/>
+      
+          <input id="userSubmit" class="userSubmit" type="submit" value="Enter" />
+      
+        </form>
+          <div class="user-container">
+            <div id="userArea" class="userArea">
+              <div class="users">
+
+              </div>
+              <div id="ready">
+                <form id="ready-form" action="">
+                  <button id="btnReady" class="btn">Ready</button>
+                </form>
+                <form id="create-form" action="">
+                  <button id="btnCreateRound" class="btn">Create Round</button>
+                </form>
+              </div>
+              </div>
+            </div>
+            <div class="chat-container">
+            <div class="chat-main" id="chat-main">
+              <div class="messages" id="messages">
+
+              </div>
+              <form id="chat-form">
+                <input class="messageInput" id="message" type="text" placeholder="Enter Message" required autocomplete="off" />
+  
+                <button id="btnChat" class="btn" >Send</button>
+              </form>
+            </div>
+          </div>
+          <div id="create-container">
+            <form id="create-round" enctype="multipart/form-data" action="/" target="uploader_iframe">
+              <div id="additional-question">
+                <h1>Create Round</h1>
+              <div id="question-1" class="questions">
+                <div class="question-input">
+                    <label for="question"><h3>Question: 1 </h3></label><input id="question" type="text" placeholder="Write Question"/>
+                </div>
+                <label for="imgUpload"><h3>Upload Image (If Needed)</h3></label><input id="imgUpload" type='file' />
+                <div class="marks">
+                    <label for="marks"><h3>Marks: </h3></label><input id="marks" type="number" min="1" />
+                </div>
+                <div class="asn-options">
+                    <label><h3>Answer Options: </h3></label>
+                    <div id="vote-div" class="option"><label for="vote">Vote</label><input id="vote" class="answer" type="radio" name="ans-option" value="vote" /></div>
+                    <div id="answer-div" class="option"><label for="answer">Answer</label><input id="answer" class="answer" type="radio" name="ans-option" value="answer" /></div>
+                    <div id="choice-div" class="option"><label for="choice">Multiple Choice</label><input id="choice" class="answer" type="radio" name="ans-option" value="choice" /></div>
+                </div>  
+            </div>
+              </div>
+            <div class="question-btns">
+                <button id="btnCreateRound" class="btn" type="submit" >Create Round</button>
+                <button id="btnAdd" class="btn" >+</button>
+                <div></div>
+            </div>
+            </form>
+            <iframe id="uploader_iframe" name="uploader_iframe" style="display: none;"></iframe>
+          </div>
+      </div>
+     <footer>
+
+     </footer>
+   </body>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.9.4/qs.min.js" 
+  integrity="sha256-ijqLssetA1NMNjZ+w1zaUafQQLm4IW5OoM8O+4tatME=" 
+  crossorigin="anonymous"></script>
+   <script
+  src="https://code.jquery.com/jquery-3.5.0.js"
+  integrity="sha256-r/AaFHrszJtwpe+tHyNi/XCfMxYpbsRg2Uqn0x3s2zc="
+  crossorigin="anonymous"></script>
+  <script src="/socket.io/socket.io.js"></script>
+   <script src="./js/main.js"></script>
+
+ </html>

@@ -21,9 +21,21 @@ function userLeave(id) {
         return users.splice(index, 1)[0];
     }
 }
+// Get all users
+function getUsers() {
+    return users;
+}
+
+// Get room users
+function getReadyUsers() {
+    return users.filter(user => user.ready === true);
+}
+
 
 module.exports = {
     userJoin,
     getCurrentUser,
     userLeave,
+    getUsers,
+    getReadyUsers
 };

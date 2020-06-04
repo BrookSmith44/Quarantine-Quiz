@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./public/styles/styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="index-wrapper">
+        <div id="create-container">
+            <form id="create-round">
+                <h1>Create Round</h1>
+                <div id="question-1" class="questions">
+                    <div class="question-input">
+                        <label for="question"><h3>Question: </h3></label><input id="question" type="text" placeholder="Write Question"/>
+                    </div>
+                    <label for="imgUpload"><h3>Upload Image (If Needed)</h3></label><input id="imgUpload" type='file' />
+                    <div class="marks">
+                        <label for="marks"><h3>Marks: </h3></label><input id="marks" type="number" min="1" />
+                    </div>
+                    <div class="asn-options">
+                        <label><h3>Answer Options: </h3></label>
+                        <div id="vote-div" class="option"><label for="vote">Vote</label><input id="vote" class="answer" type="radio" name="ans-option" value="vote" /></div>
+                        <div id="answer-div" class="option"><label for="answer">Answer</label><input id="answer" class="answer" type="radio" name="ans-option" value="answer" /></div>
+                        <div id="choice-div" class="option"><label for="choice">Multiple Choice</label><input id="choice" class="answer" type="radio" name="ans-option" value="choice" /></div>
+                    </div>  
+                </div>
+                <div class="question-btns">
+                    <button id="btnCreateRound" class="btn" >Create Round</button>
+                    <button id="btnAdd" class="btn" >+</button>
+                </div>
+            </form>
+          </div>
+    </div>
+</body>
+</html>
