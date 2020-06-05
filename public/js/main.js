@@ -91,39 +91,70 @@ function CreateRound() {
             let type = '';
             // empty varirable for answer
             let answer = '';
+            // empty array for choice
+            let choices = [];
+            // Empty quesion object
+            let questionObj = {};
 
             // If vote is checked
             if (voteRadio.checked) {
                 // set type to vote
                  type = voteRadio.value;
+
+                 // Set object for each question
+                questionObj = {
+                    question: question,
+                    mark: mark,
+                    type: type
+                }
             } 
             // Else if answer is checked
             else if(answerRadio.checked) {
                 // set type to answer
                  type = answerRadio.value;
                  const answerInput = document.getElementById(`answer-input-${i}`);
-                answer = answerInput.value;
+                 answer = answerInput.value;
+
+                 // Set object for each question
+                questionObj = {
+                    question: question,
+                    mark: mark,
+                    answerObj: {
+                        answer: answer,
+                        type: type
+                    }
+                }
             } 
             // Else if choice is checked
             else if(choiceRadio.checked) {
                 // set type to choice
                  type = choiceRadio.value;
-            }
+                 console.log(ansNum);
+                 // for loop to get all the choices
+                 for(i = 1; i <= ansNum-1; i++) {
+                     console.log(i, ansNum)
+                     const choicesInput = document.getElementById(`choice-input-${i}`);
+                     choices.push(choicesInput.value);
 
-            // Set object for each question
-            const questionObj = {
-                question: question,
-                mark: mark,
-                answerObj: {
-                    answer: answer,
-                    type: type
-                }
+                     // Set object for each question
+                     questionObj = {
+                        question: question,
+                        mark: mark,
+                         answerObj: {
+                             answer: answer,
+                             type: type,
+                             choices: choices
+                            }
+                     }
+                 }
             }
 
             // Push object into array
             roundArr.push(questionObj);
         }
         console.log(roundArr);
+
+        socket.emit('roundSubmit', roundArr);
     });
 
 }
@@ -352,7 +383,7 @@ function createNumOfChoices(element) {
             div.setAttribute('id', `choices-${ansNum}`)
             // Set content of div
             div.innerHTML = `
-            <label for="choice-input"><h3>Choice ${ansNum}: </h3></label><input id="choice-${ansNum}" class="answer-input" type="text" placeholder="Write Answer" />
+            <label for="choice-input"><h3>Choice ${ansNum}: </h3></label><input id="choice-input-${ansNum}" class="answer-input" type="text" placeholder="Write Answer" />
             `;
             // Append div from ans-option
             // Append div from ans-options div

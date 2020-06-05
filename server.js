@@ -68,6 +68,11 @@ io.on('connection', socket => {
         } 
     });
 
+    // Listen for round submit
+    socket.on('roundSubmit', (roundArr) => {
+        console.log(roundArr);
+    });
+
     // Listen for chat message
     socket.on('chatMessage', (message) => {
         const user = getCurrentUser(socket.id);
