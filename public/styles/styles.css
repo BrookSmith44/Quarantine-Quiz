@@ -225,18 +225,18 @@
   flex-direction: column;
 }
 
-  #question {
+  .questionInput, .answer-input {
     width: 80%;
     border-bottom: 2px solid pink;
     font-size: 1.1em;
     margin-bottom: 5%;
   }
 
-  .questions #marks {
+  .questions .marks {
     width: 40px;
   }
 
-  .marks {
+  .marksContainer {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -244,11 +244,20 @@
     margin-bottom: 5%;
   }
 
-  .asn-options {
+  .ans-options {
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
+  }
+
+  .answers {
+    width: 100%;
+  }
+
+  .answers input {
+    width: 80%;
   }
 
   .option {
@@ -268,6 +277,10 @@
     justify-content: space-between;
     align-items: flex-end;
     align-self: flex-end;
+  }
+
+  .question-btns .btn {
+    height: 100%;
   }
 
   .btn {
