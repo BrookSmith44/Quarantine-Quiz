@@ -4,6 +4,7 @@ const http = require('http');
 const socketio = require('socket.io');
 const formMessage = require('./utilities/messages');
 const {userJoin, getCurrentUser, userLeave, getUsers, getReadyUsers} = require('./utilities/users');
+const {collectRounds} = require('./utilities/questionRound');
 
 const app = express();
 const server = http.createServer(app);
@@ -20,7 +21,6 @@ io.on('connection', socket => {
 
     socket.on('joinLobby', (username) => {
         const user = userJoin(socket.id, username, false);
-        console.log(user);
 
         // Welcome the user to the quiz
         // Single client
@@ -33,7 +33,8 @@ io.on('connection', socket => {
         // Send user info
         io.emit('users', {
             users: getUsers(),
-            currentuser: getCurrentUser(socket.id)
+            currentuser: getCurrentUser(socket.id),
+            readyUsers: getReadyUsers()
         });
     });
 
@@ -52,11 +53,14 @@ io.on('connection', socket => {
         io.emit('id', {
             user: getCurrentUser(socket.id)
         });
+        // Change button text
+        socket.emit('btnReady', {
+            user: getCurrentUser(socket.id)
+        });
         // Get readt users ready
         const usersReady = getReadyUsers();
         // Check if there is more than one user
         if (users.length > 1) {
-            console.log('Users: ', users.length, 'Ready Users: ', usersReady.length);
             // Check if user array is the same length as the  user ready array
             if (users.length == usersReady.length) {
                // Emit ready all to check if all the users are ready to start the quiz
@@ -70,7 +74,14 @@ io.on('connection', socket => {
 
     // Listen for round submit
     socket.on('roundSubmit', (roundArr) => {
-        console.log(roundArr);
+        const user = getCurrentUser(socket.id);
+        const round = collectRounds(socket.id, user.username, roundArr);
+        console.log(round);
+        console.log(round.length);
+        io.emit('numOfRounds', {
+            rounds: round,
+            numOfRounds: round.length
+        });
     });
 
     // Listen for chat message

@@ -1,3 +1,5 @@
+
+
 // Get user Form by ID
 const userForm = document.getElementById('userForm');
 // Get chat form by ID
@@ -36,8 +38,6 @@ const ansRadio  = document.getElementById('answer');
 let username= '';
 // Set num to 2
 let num = 2;
-// Set answer number to 0
-let ansNum = 1;
 // Number of questions
 let QNum = 1;
 
@@ -71,30 +71,36 @@ function CreateRound() {
 
     createRoundForm.addEventListener('submit', (e) => {
         e.preventDefault();
+
+         // empty varirable for type
+         let type = '';
+         // empty varirable for answer
+         let answer = '';
+         // empty array for multiple answers
+         let answers = [];
+         // empty array for choice
+         let choices = [];
+         // Empty quesion object
+         let questionObj = {};
+
         roundArr = [];
         // Loop through all questions
-        for (i = 1; i <= QNum; i++) {
+        for (q = 1; q <= QNum; q++) {
+            console.log('Question Loop: ', QNum, q);
             // Loop through question input
-            const questionInput = document.getElementById(`questionInput-${i}`);
+            const questionInput = document.getElementById(`questionInput-${q}`);
             // Loop through marks input
-            const marksInput = document.getElementById(`marks-${i}`);
+            const marksInput = document.getElementById(`marks-${q}`);
             // Loop through answer options
-            const voteRadio = document.getElementById(`vote-${i}`);
-            const answerRadio = document.getElementById(`answer-${i}`);
-            const choiceRadio = document.getElementById(`choice-${i}`);
+            const voteRadio = document.getElementById(`vote-${q}`);
+            const answerRadio = document.getElementById(`answer-${q}`);
+            const choiceRadio = document.getElementById(`choice-${q}`);
+
             
             // Get question text
             const question = questionInput.value;
             // get mark number
             const mark = marksInput.value;
-            // empty varirable for type
-            let type = '';
-            // empty varirable for answer
-            let answer = '';
-            // empty array for choice
-            let choices = [];
-            // Empty quesion object
-            let questionObj = {};
 
             // If vote is checked
             if (voteRadio.checked) {
@@ -110,31 +116,61 @@ function CreateRound() {
             } 
             // Else if answer is checked
             else if(answerRadio.checked) {
+                // Get parent node
+                const ansOptionParent = document.getElementById(`ans-options-${q}`);
+                // Get array of answer inputs
+                const answerInput = ansOptionParent.getElementsByClassName('answer-input');
+                // Set answer number to number of inputs
+                const ansNum = answerInput.length;
                 // set type to answer
                  type = answerRadio.value;
-                 const answerInput = document.getElementById(`answer-input-${i}`);
-                 answer = answerInput.value;
+
+                 // For loop runs through all answers
+                 for(i = 1; i <= ansNum; i++) {
+                     console.log('Answer for loop:', i, ansNum);
+                    // Loop through all answer inputs
+                    const multAnsInput = document.getElementById(`Q${q}-Answer-input-${i}`);
+                    console.log(`Q${q}-Answers-input-${i}`, multAnsInput.value); 
+                    // Push input value into answers array
+                    answers.push(multAnsInput.value);
+                 }
+                 // Set answer to answer input value
+                 answer = answers;
 
                  // Set object for each question
                 questionObj = {
                     question: question,
                     mark: mark,
                     answerObj: {
-                        answer: answer,
+                        answers: answers,
                         type: type
                     }
                 }
+                console.log(questionObj);
             } 
             // Else if choice is checked
             else if(choiceRadio.checked) {
-                // set type to choice
+                // Get parent node
+                const ansOptionParent = document.getElementById(`ans-options-${q}`);
+                // Get array of answer inputs
+                const answerInput = ansOptionParent.getElementsByClassName('answer-input');
+                // Set answer number to number of inputs
+                const ansNum = answerInput.length;
+                 // set type to choice
                  type = choiceRadio.value;
-                 console.log(ansNum);
                  // for loop to get all the choices
-                 for(i = 1; i <= ansNum-1; i++) {
-                     console.log(i, ansNum)
-                     const choicesInput = document.getElementById(`choice-input-${i}`);
+                 for(i = 1; i <= ansNum; i++) {
+                     console.log('Choice loop: ', i, ansNum);
+                     // Get choice input with ID
+                     const choicesInput = document.getElementById(`Q${q}-Choice-input-${i}`);
+                     // Get choice checkebox by ID
+                    const choiceCheckbox = document.getElementById(`Q${q}-Choice-checkbox-${i}`);
+                     // Push choice input value into choices array
                      choices.push(choicesInput.value);
+                     // If checkbox is checked
+                    if (choiceCheckbox.checked) {
+                        answer = choicesInput.value;
+                    }
 
                      // Set object for each question
                      questionObj = {
@@ -151,10 +187,22 @@ function CreateRound() {
 
             // Push object into array
             roundArr.push(questionObj);
+            console.log(roundArr);
         }
-        console.log(roundArr);
 
         socket.emit('roundSubmit', roundArr);
+
+        // display user and chat containers and hide create round container
+        userContainer.style.display = 'flex';
+        chatContainer.style.display = 'flex';
+        // Show create round container
+        createRoundContainer.style.display = 'none';
+
+        socket.on('numOfRounds', ({rounds, numOfRounds}) => {
+            console.log(numOfRounds);
+
+            outputRoundNum(numOfRounds);
+        });
     });
 
 }
@@ -166,8 +214,10 @@ function userLobby()
     socket.emit('joinLobby', username);
 
     // get users
-    socket.on('users', ({users}) => {
-        outputUsers(users);
+    socket.on('users', ({users, readyUsers}) => {
+        console.log(readyUsers);
+        outputUsers(users, readyUsers);
+        //outputReadyUsers(readyUsers);
     });
 
     // Message from server
@@ -204,6 +254,15 @@ function userLobby()
         userReady(user);
     });
 
+    socket.on('btnReady', (user) => {
+        console.log(user.user.ready);
+        if (user.user.ready == true) {
+            btnReady.innerHTML = 'Not Ready';
+        } else {
+            btnReady.innerHTML = 'Ready';
+        }
+    })
+
     socket.on('readyAll', (users) => { 
         // If the users length is greater than 1
         if (users.users.length > 1) {
@@ -236,10 +295,25 @@ function outputMessage(message) {
 }
 
 // Add users list to front end
-function outputUsers(users) {
+function outputUsers(users, readyUsers) {
+    
     usersDiv.innerHTML = `${users.map(user => 
         `<div id="${user.id}" class="user">${user.username}
         </div>`).join('')}`;
+
+    // If the array contains users
+    if(readyUsers.length > 0) {
+        // Loop through array
+        for(i = 0; i < readyUsers.length; i++) {
+            const userDiv = document.getElementById(readyUsers[i].id);
+            // Create header for ready users
+            readyHeader = document.createElement('h3');
+            // Set header text
+             readyHeader.innerHTML = '<i class="fas fa-check-circle"></i>';
+            // Insert h1 into user div
+            userDiv.appendChild(readyHeader);
+        }
+    }
 }
 
 // Display userArea and chat
@@ -249,28 +323,31 @@ function displayUsers() {
     chatContainer.style.display = 'flex';
 }
 
+function outputReadyUsers(user) {
+    // Get user div by id
+    userDiv = document.getElementById(user.user.id);
+    // Create header for ready users
+    readyHeader = document.createElement('h3');
+    // Set header text
+    readyHeader.innerHTML = '<i class="fas fa-check-circle"></i>';
+    // Insert h1 into user div
+    userDiv.appendChild(readyHeader);
+}
+
 function userReady(user) {
     // Get user ready button by id
-    btnReady = document.getElementById('btnReady');
+    const btnReady = document.getElementById('btnReady');
 
     if (user.user.ready === true) {
-        console.log(user.user.ready);
-        // Get user div by id
-        userDiv = document.getElementById(user.user.id);
-        // Create header for ready users
-        readyHeader = document.createElement('h3');
-        // Set header text
-        readyHeader.innerHTML = 'Ready!';
-        // Insert h1 into user div
-        userDiv.appendChild(readyHeader);
+        // Call output function
+        outputReadyUsers(user);
         // Set button text
-        btnReady.innerHTML = 'Not Ready';
+        //btnReady.innerHTML = 'Not Ready';
     } else {
-        console.log(user.user.ready);
         // Hide ready header
         readyHeader.style.display = 'none';
         // Set button text
-        btnReady.innerHTML = 'Ready';
+        //btnReady.innerHTML = 'Ready';
     }
 }
 
@@ -288,116 +365,119 @@ function addQuestion(num) {
                 <div class="marksContainer">
                     <label for="marks"><h3>Marks: </h3></label><input class="marks" id="marks-${num}" type="number" min="1" />
                 </div>
-                <div id="options-${num}" class="ans-options">
+                <div id="ans-options-${num}" class="ans-options">
                     <label><h3>Answer Options: </h3></label>
                     <div id="vote-div" class="option"><label for="vote">Vote</label><input id="vote-${num}" class="answer" type="radio" name="ans-option-${num}" value="vote" /></div>
-                    <div id="answer-div" class="option"><label for="answer">Answer</label><input id="answer-${num}" class="answer" type="radio" name="ans-option-${num}" value="answer" onchange="createAnswerInput(this);" /></div>
-                    <div id="choice-div" class="option"><label for="choice">Multiple Choice</label><input id="choice-${num}" class="answer" type="radio" name="ans-option-${num}" value="choice" onchange="createNumOfChoices(this);" /></div>
+                    <div id="answer-div" class="option"><label for="answer">Answer</label><input id="answer-${num}" class="answer" type="radio" name="ans-option-${num}" value="answer" onchange="createNumOfChoices(this, 'Answer');" /></div>
+                    <div id="choice-div" class="option"><label for="choice">Multiple Choice</label><input id="choice-${num}" class="answer" type="radio" name="ans-option-${num}" value="choice" onchange="createNumOfChoices(this, 'Choice');" /></div>
                 </div>  
             </div>
     `;
     // append div from form
     addQDiv.appendChild(questionDiv);
 
+    // Scroll down to new question
+    addQDiv.scrollTop = addQDiv.scrollHeight;
+
     // Increment QNum
     QNum++;
 }
 
-// Answer input 
-function createAnswerInput(element) {
-    // Get parent element by ID
-    const ansOptionParent = document.getElementById(element.parentNode.parentNode.id);
-    // Get answer input by class name
-    const choiceInput = ansOptionParent.querySelector('.numOfChoice');
-    // Get answer input by class name
-    const ansInput = ansOptionParent.querySelector('.answer-input');
-    // Get choices div
-    const choicesDiv = ansOptionParent.querySelector('.choices-div');
-    console.log(ansOptionParent.childNodes);
-    // If choice input exists
-    if(choiceInput) {
-        choicesDiv.remove();
-    }
-    if(!ansInput) {
-        // Create new div
-        const div = document.createElement('Div');
-        // Add class to div
-        div.classList.add('answer-container');
-        // Set id for div
-        div.setAttribute('id', `answer-${QNum}`);
-        // Set content of div
-        div.innerHTML = `
-        <input id="answer-input-${QNum}" class="answer-input" type="text" placeholder="Write Answer" />
-        `;
-        // Append div from ans-options div
-        ansOptionParent.appendChild(div);   
-    }
-}
-
 // choice input
-function createNumOfChoices(element) {
+function createNumOfChoices(element, type) {
     // Get parent element by ID
      const ansOptionParent = document.getElementById(element.parentNode.parentNode.id);
+    // Get container by class name
+    const choiceDiv = ansOptionParent.querySelector(`.Choices-div`);
+    // Get container by clas name
+    const answerDiv = ansOptionParent.querySelector(`.Answers-div`);
     // Get answer input by class name
-    const ansInput = ansOptionParent.querySelector('.answer-input');
-    // Get answer input by class name
-    const choiceInput = ansOptionParent.querySelector('.numOfChoice');
+    const choiceInput = ansOptionParent.querySelector(`.numOf${type}`);
+ 
     // If the answer input exists
-    if(ansInput) {
-        // Hide answer input
-        ansInput.remove();
+    if (type == 'Answer' && choiceDiv) {
+        // remove choice div
+        choiceDiv.remove();
+    } else if(type == 'Choice' && answerDiv) {
+        // remove answer div
+        answerDiv.remove();
     }
     // If number of choice input does not exist
     if(!choiceInput) {
         // Create new div
         const div = document.createElement('Div');
         // Add class to div
-        div.classList.add('choices-div');
+        div.classList.add(`${type}s-div-${QNum}`);
         // Set content of div
         div.innerHTML = `
-        <input class="numOfChoice" type="number" value="0" min="1" onchange="numOfAnswers(this);" />
+        <input class="numOf${type}" type="number" value="0" min="1" onchange="numOfAnswers(this,  '${type}');" />
         `;
         // Append div from ans-options div
         ansOptionParent.appendChild(div); 
     } 
 }
     
-    function numOfAnswers(element) {
+    function numOfAnswers(element, type) {
         // Get parent element by ID
         const ansOptionParent = document.getElementById(element.parentNode.parentNode.id);
-        console.log(ansOptionParent);
         // Get answer input by class name
-        const choiceInput = ansOptionParent.querySelector('.numOfChoice');
+        const choiceInput = ansOptionParent.querySelector(`.numOf${type}`);
         // Get div for choices 
-        const choicesDiv = ansOptionParent.querySelector('.choices-div');
+        const choicesDiv = ansOptionParent.querySelector(`.${type}s-div-${QNum}`);
+        // Get anwer input
+        const answerInput = ansOptionParent.getElementsByClassName('answer-input');
         let choiceValue = choiceInput.value;
         choiceValue++;
+        let ansNum;
+        if(answerInput.length == 0) {
+            ansNum = 1;
+        } else {
+            ansNum = answerInput.length + 1;
+
+        }
+
         if (choiceValue > ansNum) {
             // for loop to create answer inpu
             for (ansNum; ansNum < choiceValue; ansNum++) {
             // Create new div
             const div = document.createElement('Div');
             // Create class for div
-            div.classList.add('choices');
+            div.classList.add(type+'s');
             // Create is for div
-            div.setAttribute('id', `choices-${ansNum}`)
+            div.setAttribute('id', `Q${QNum}-${type}s-${ansNum}`);
+            // Set different content for different asnwer type
+            let content = '';
+            if(type == 'Answer') {
+                content = `
+                <label for="Q${QNum}-${type}-input"><h3>${type} ${ansNum}: </h3></label><input id="Q${QNum}-${type}-input-${ansNum}" class="answer-input" type="text" placeholder="Write Answer" />
+                ` ;
+            } else if (type == 'Choice') {
+                content = `
+                <label for="Q${QNum}-${type}-input"><h3>${type} ${ansNum}: </h3></label><input id="Q${QNum}-${type}-input-${ansNum}" class="answer-input" type="text" placeholder="Write Answer" />
+                <input id="Q${QNum}-${type}-checkbox-${ansNum}" type="checkbox" />` ;
+            }
             // Set content of div
-            div.innerHTML = `
-            <label for="choice-input"><h3>Choice ${ansNum}: </h3></label><input id="choice-input-${ansNum}" class="answer-input" type="text" placeholder="Write Answer" />
-            `;
+            div.innerHTML = content;
             // Append div from ans-option
             // Append div from ans-options div
             choicesDiv.appendChild(div); 
-            console.log(ansNum);
             }
-        } else if (choiceValue < ansNum) {
-            console.log(`answer-${ansNum-1}`);
             for (ansNum; ansNum > choiceValue; ansNum--) {
                 // Get div by ID
-                const div = document.getElementById(`answer-${ansNum-1}`);
-                console.log(div);
+                const div = document.getElementById(`${type}s-${ansNum-1}`);
                 // remove div
                 div.remove();
             }
         }
+    }
+
+    // Display number of rounds created by all users
+    function outputRoundNum(RNum) {
+        // Create div that contains round header with number
+        const div = document.getElementById('round-header');
+        console.log(div);
+        // Set innerHTML
+        div.innerHTML = `
+        <h2>Rounds: ${RNum}</h2>
+        `;
     }
