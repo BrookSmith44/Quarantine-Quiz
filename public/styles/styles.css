@@ -15,6 +15,14 @@
     align-items: center;
     flex-direction: column;
   }
+
+  .round-header {
+    height: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+  }
   
   .userForm {
     width: 40%;

@@ -93,6 +93,7 @@ io.on('connection', socket => {
     // Listen for quiz start
     socket.on('quizStart', (message) => {
         io.emit('message', formMessage(botName, message));
+        io.emit('startCountdown');
     });
 
     // Run when user disconnects

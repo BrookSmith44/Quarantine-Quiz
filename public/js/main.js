@@ -273,6 +273,10 @@ function userLobby()
         }
     });
 
+    socket.on('startCountdown', () => {
+        outputQuizStart(11000);
+    });
+
     // Create round button
     btnCreateRound.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -335,19 +339,13 @@ function outputReadyUsers(user) {
 }
 
 function userReady(user) {
-    // Get user ready button by id
-    const btnReady = document.getElementById('btnReady');
-
+    // If the current user is ready
     if (user.user.ready === true) {
         // Call output function
         outputReadyUsers(user);
-        // Set button text
-        //btnReady.innerHTML = 'Not Ready';
     } else {
         // Hide ready header
         readyHeader.style.display = 'none';
-        // Set button text
-        //btnReady.innerHTML = 'Ready';
     }
 }
 
@@ -473,11 +471,47 @@ function createNumOfChoices(element, type) {
 
     // Display number of rounds created by all users
     function outputRoundNum(RNum) {
-        // Create div that contains round header with number
+        // Get element by ID
         const div = document.getElementById('round-header');
-        console.log(div);
         // Set innerHTML
         div.innerHTML = `
         <h2>Rounds: ${RNum}</h2>
         `;
+    }
+
+    // Function to display a countdown to start the quiz
+    function outputQuizStart(sec) {
+       // Get element by ID
+       const div = document.getElementById('round-header');
+       // Create new div for countdown
+       const countdownDiv = document.createElement('Div');
+       // Set class for countdown div
+       countdownDiv.classList.add('countdown-div');
+       // Append countdown div of round header div
+       div.appendChild(countdownDiv);
+
+        // Countdown
+        // Get current date/time + countdown time
+        const countdownDate = new Date().getTime();
+
+        // Update count every second
+        let interval = setInterval(function() {
+            // Get current date/time
+            const now = new Date().getTime() - sec;
+
+            // Get the difference between now and countdown date
+            const difference = countdownDate - now;
+
+            // Time calculations for seconds
+            const seconds = Math.floor((difference % (1000 * 60 )) / 1000);
+
+            // Display the countdown
+            // Set innerHTML of countdown div
+            countdownDiv.innerHTML = `<h2>The quiz will start in: ${seconds}</h2>`;
+
+            // If the countdown is finished
+            if (difference < 0) {
+                countdownDiv.innerHTML = '<h2>Start Quiz</h2>';
+            }
+        }, 500);
     }
