@@ -209,7 +209,7 @@
   }
 
   /* Create round */
-  #create-container {
+  #create-container, #quiz-container {
     background-color: white;
     width: 60%;
     display: none;
@@ -335,6 +335,11 @@
     font-size: 1.2em;
     font-weight: bold;
     margin-bottom: 2px;
+  }
+
+  /* Quiz */
+  #quiz-container {
+    height: 50%;
   }
 
   /* Show number arrows always */

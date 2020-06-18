@@ -4,7 +4,7 @@ const http = require('http');
 const socketio = require('socket.io');
 const formMessage = require('./utilities/messages');
 const {userJoin, getCurrentUser, userLeave, getUsers, getReadyUsers} = require('./utilities/users');
-const {collectRounds} = require('./utilities/questionRound');
+const {collectRounds, getRounds, resetRounds} = require('./utilities/questionRound');
 
 const app = express();
 const server = http.createServer(app);
@@ -75,12 +75,10 @@ io.on('connection', socket => {
     // Listen for round submit
     socket.on('roundSubmit', (roundArr) => {
         const user = getCurrentUser(socket.id);
-        const round = collectRounds(socket.id, user.username, roundArr);
-        console.log(round);
-        console.log(round.length);
+        collectRounds(socket.id, user.username, roundArr);
+        const getRound = getRounds();
         io.emit('numOfRounds', {
-            rounds: round,
-            numOfRounds: round.length
+            numOfRounds: getRound.length
         });
     });
 
@@ -96,18 +94,33 @@ io.on('connection', socket => {
         io.emit('startCountdown');
     });
 
+    // Listen for get round
+    socket.on('getRound', () => {
+        const rounds = getRounds();
+        // Send rounds to frontend
+        io.emit('sendRound', {
+            rounds: rounds
+        });
+    });
+
     // Run when user disconnects
     socket.on('disconnect', () => {
         const user = userLeave(socket.id);
+        const users = getUsers();
         if (user) {
             // All Clients
             io.emit('message', formMessage(botName, `${user.username} has disconnected`));
             console.log('User disconnected');
 
             // Send user info
-        io.emit('users', {
+             io.emit('users', {
             users: getUsers()
-        });
+            });
+        }
+
+        // If all users leave
+        if (users.length == 0) {
+            resetRounds();
         }
     });
 });

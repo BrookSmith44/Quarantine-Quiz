@@ -55,6 +55,27 @@ userForm.addEventListener('submit', (e) => {
     displayUsers();
 });
 
+// Function to run the quiz
+function quizStart() {
+    // Get elements by ID
+    const quizContainer = document.getElementById('quiz-container');
+    // Hide the user and chat containers and display the quiz container
+    // Hide
+    userContainer.style.display = 'none';
+    chatContainer.style.display = 'none';
+    // Display
+    quizContainer.style.display = 'flex';
+
+    // Get round
+    socket.emit('getRound');
+
+    // Recieve round array from server
+    socket.on('sendRound', (rounds) => {
+        console.log(rounds);
+    });
+}
+
+// Function to create a round
 function CreateRound() {
     // hide user and chat containers and display create round container
     userContainer.style.display = 'none';
@@ -198,8 +219,7 @@ function CreateRound() {
         // Show create round container
         createRoundContainer.style.display = 'none';
 
-        socket.on('numOfRounds', ({rounds, numOfRounds}) => {
-            console.log(numOfRounds);
+        socket.on('numOfRounds', ({numOfRounds}) => {
 
             outputRoundNum(numOfRounds);
         });
@@ -512,6 +532,10 @@ function createNumOfChoices(element, type) {
             // If the countdown is finished
             if (difference < 0) {
                 countdownDiv.innerHTML = '<h2>Start Quiz</h2>';
+                // Stop interval from running
+                clearInterval(interval);
+                // Start the quiz
+                quizStart();
             }
         }, 500);
     }

@@ -1,6 +1,7 @@
 // Create array for round
-const allRounds  = [];
+let allRounds  = [];
 
+// Insert rounds into array
 function collectRounds(id, username, questions) {
     roundObj = {
         id: id,
@@ -10,10 +11,21 @@ function collectRounds(id, username, questions) {
 
     // Push Object into array
     allRounds.push(roundObj);
+}
 
+// Return array
+function getRounds() {
     return allRounds;
 }
 
+// Reset array
+function resetRounds() {
+    allRounds = [];
+}
+
+
 module.exports = {
-    collectRounds
+    collectRounds,
+    getRounds,
+    resetRounds
 };
