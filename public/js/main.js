@@ -1,5 +1,3 @@
-
-
 // Get user Form by ID
 const userForm = document.getElementById('userForm');
 // Get chat form by ID
@@ -71,7 +69,15 @@ function quizStart() {
 
     // Recieve round array from server
     socket.on('sendRound', (rounds) => {
-        console.log(rounds);
+        // Set variables 
+        // Set number of rounds
+        roundNum = Object.keys(rounds).length;
+        // Set current round number to 0
+        i = 0;
+
+        console.log(roundNum, i);
+        // Call function to get questions
+        getQuestions(rounds, roundNum, i);
     });
 }
 
@@ -107,7 +113,6 @@ function CreateRound() {
         roundArr = [];
         // Loop through all questions
         for (q = 1; q <= QNum; q++) {
-            console.log('Question Loop: ', QNum, q);
             // Loop through question input
             const questionInput = document.getElementById(`questionInput-${q}`);
             // Loop through marks input
@@ -148,10 +153,8 @@ function CreateRound() {
 
                  // For loop runs through all answers
                  for(i = 1; i <= ansNum; i++) {
-                     console.log('Answer for loop:', i, ansNum);
                     // Loop through all answer inputs
                     const multAnsInput = document.getElementById(`Q${q}-Answer-input-${i}`);
-                    console.log(`Q${q}-Answers-input-${i}`, multAnsInput.value); 
                     // Push input value into answers array
                     answers.push(multAnsInput.value);
                  }
@@ -162,12 +165,11 @@ function CreateRound() {
                 questionObj = {
                     question: question,
                     mark: mark,
+                    type: type,
                     answerObj: {
                         answers: answers,
-                        type: type
                     }
                 }
-                console.log(questionObj);
             } 
             // Else if choice is checked
             else if(choiceRadio.checked) {
@@ -181,7 +183,6 @@ function CreateRound() {
                  type = choiceRadio.value;
                  // for loop to get all the choices
                  for(i = 1; i <= ansNum; i++) {
-                     console.log('Choice loop: ', i, ansNum);
                      // Get choice input with ID
                      const choicesInput = document.getElementById(`Q${q}-Choice-input-${i}`);
                      // Get choice checkebox by ID
@@ -197,9 +198,9 @@ function CreateRound() {
                      questionObj = {
                         question: question,
                         mark: mark,
+                        type: type,
                          answerObj: {
                              answer: answer,
-                             type: type,
                              choices: choices
                             }
                      }
@@ -208,7 +209,6 @@ function CreateRound() {
 
             // Push object into array
             roundArr.push(questionObj);
-            console.log(roundArr);
         }
 
         socket.emit('roundSubmit', roundArr);
@@ -235,7 +235,6 @@ function userLobby()
 
     // get users
     socket.on('users', ({users, readyUsers}) => {
-        console.log(readyUsers);
         outputUsers(users, readyUsers);
         //outputReadyUsers(readyUsers);
     });
@@ -275,7 +274,6 @@ function userLobby()
     });
 
     socket.on('btnReady', (user) => {
-        console.log(user.user.ready);
         if (user.user.ready == true) {
             btnReady.innerHTML = 'Not Ready';
         } else {
@@ -294,7 +292,7 @@ function userLobby()
     });
 
     socket.on('startCountdown', () => {
-        outputQuizStart(11000);
+        outputQuizStart(10000);
     });
 
     // Create round button
@@ -538,4 +536,192 @@ function createNumOfChoices(element, type) {
                 quizStart();
             }
         }, 500);
+    }
+
+    // Function to get questions
+    function getQuestions(rounds, roundNum, i) {
+        // Set variables for questions 
+        questionNum = Object.keys(rounds[i].questions).length;
+        // Check if variable already exists
+        if (typeof currentQ == 'undefined') {
+            // Set current question variable to 0
+            currentQ = 0;
+        }
+        console.log(questionNum, currentQ);
+        // Empty array for questions
+        const questions = [];
+        // Set empty type value
+        let type = '';
+        // Set empty question value
+        let question = '';
+        // Set empty mark value
+        let mark = '';
+        // Get the question type
+        type = rounds[i].questions[currentQ].type;
+            
+        // Switch case for each type - switch case runs through questions array
+        switch (type) {
+            case 'vote' :
+                // Get question and mark for currnt question
+                question = rounds[i].questions[currentQ].question;
+                marks = rounds[i].questions[currentQ].mark;
+                const questionsObj = {
+                    question: question,
+                    marks: marks
+                }
+                // Push object into array
+                questions.push(questionsObj);
+                // Display question function
+                displayVoteQuestion(question, marks, currentQ);
+                break;
+            case 'answer' :
+                question = rounds[i].questions[currentQ].question;
+                marks = rounds[i].questions[currentQ].mark;
+                const multAnsNum = rounds[i].questions[currentQ].answerObj.answers.length;
+                console.log(multAnsNum);
+                DisplayAnswerQuestion(question, marks, currentQ, multAnsNum);
+                break;
+            case 'choice' :
+                console.log(rounds[i]);
+                question = rounds[i].questions[currentQ].question;
+                marks = rounds[i].questions[currentQ].mark;
+                const multChoiceNum = rounds[i].questions[currentQ].answerObj.choices.length;
+                const choices = rounds[i].questions[currentQ].answerObj.choices;
+                DisplayMultipleChoiceQuestion(question, marks, currentQ, multChoiceNum, choices);
+                break;
+        }
+    }
+
+    // DISPLAY QUESTIONS
+
+    // Function to display vote question
+    function displayVoteQuestion(question, mark, currentQ) {
+        // Create div container for question
+        const questionDiv = document.createElement('Div');
+        // Set width attribute of div to 100%
+        questionDiv.setAttribute('style', 'width:100%; display:flex; justify-content:center; align-items:center;');
+        // Get quiz containter by id 
+        const quizContainer = document.getElementById('quiz-container');
+
+        const countdownDiv = document.createElement('Div');
+
+        // Set innerHTML of new div
+        questionDiv.innerHTML = `
+            <form class="vote-question-form" id="vote-question-${currentQ}">
+                <h2>${question}</h2>
+                <input class="answer-input" id="user-answer-${currentQ}" type="text" placeholder="Enter your answer here..."/>
+                <div id="quizbtns">
+                    <input class="btn" id="btnQuizSubmit" type="submit"></input>
+                </div>
+            </form>
+        `;
+        // Append new div of quiz container
+        quizContainer.appendChild(questionDiv);
+
+        // Get quiz button element
+        const quizSubmit = document.getElementById(`vote-question-${currentQ}`);
+        
+        // Get answer input element
+        const answerInput = document.getElementById(`user-answer-${currentQ}`);
+
+        // Listen for when user clicks question submit button
+        quizSubmit.addEventListener('submit', (e) => {
+            // Prevent page from refreshing
+            e.preventDefault();
+
+            const answer = answerInput.value;
+
+            console.log('Submit answer', answer);
+
+
+        });
+    }
+
+    // Function To Display Answer Question
+    function DisplayAnswerQuestion(question, mark, currentQ, multAnsNum) {
+        // Create div container for question
+        const questionDiv = document.createElement('Div');
+        // Set width attribute of div to 100%
+        questionDiv.setAttribute('style', 'width:100%; display:flex; justify-content:center; align-items:center;');
+        // Get quiz containter by id 
+        const quizContainer = document.getElementById('quiz-container');
+
+        const countdownDiv = document.createElement('Div');
+
+        console.log(question);
+
+        // Set innerHTML of new div
+        questionDiv.innerHTML = `
+            <form class="vote-question-form" id="vote-question-${currentQ}">
+                <h2>${question}</h2>
+                <div id="ansArea"></div>
+                <div id="quizbtns">
+                    <input class="btn" id="btnQuizSubmit" type="submit"></input>
+                </div>
+            </form>
+        `;
+        // Append new div of quiz container
+        quizContainer.appendChild(questionDiv);
+
+        // Add answer input for multiple answers
+        // get answer area div
+        const ansArea = document.getElementById('ansArea');
+        
+        // Loop to create correct amount of answer inputs
+        for (i = 0; i < multAnsNum; i++) {
+            const div = document.createElement('Div');
+            div.setAttribute('style', 'width: 100%; display: flex; flex-direction: row');
+            const divNum = i+ 1;
+            // Set inner HTML for answer area
+            div.innerHTML = `
+            <h3 style="color:pink;">${divNum}: </h3><input class="answer-input" id="user-answer-${currentQ}" type="text" placeholder="Enter your answer here..."/>
+            `;
+
+            // Apend new div in the answer area
+            ansArea.appendChild(div);
+        }
+    }
+
+    // Function To Display Multiple Choice Question
+    function DisplayMultipleChoiceQuestion(question, mark, currentQ, multChoiceNum, choices) {
+        // Create div container for question
+        const questionDiv = document.createElement('Div');
+        // Set width attribute of div to 100%
+        questionDiv.setAttribute('style', 'width:100%; display:flex; justify-content:center; align-items:center;');
+        // Get quiz containter by id 
+        const quizContainer = document.getElementById('quiz-container');
+
+        const countdownDiv = document.createElement('Div');
+
+        console.log(question);
+
+        // Set innerHTML of new div
+        questionDiv.innerHTML = `
+            <form class="vote-question-form" id="vote-question-${currentQ}">
+                <h2>${question}</h2>
+                <div id="ansArea"></div>
+                <div id="quizbtns">
+                    <input class="btn" id="btnQuizSubmit" type="submit"></input>
+                </div>
+            </form>
+        `;
+        // Append new div of quiz container
+        quizContainer.appendChild(questionDiv);
+
+        // Add answer input for multiple answers
+        // get answer area div
+        const ansArea = document.getElementById('ansArea');
+        
+        // Loop to create correct amount of answer inputs
+        for (i = 0; i < multChoiceNum; i++) {
+            const div = document.createElement('Div');
+            div.setAttribute('style', 'width: 100%; display: flex; flex-direction: row');
+            // Set inner HTML for answer area
+            div.innerHTML = `
+            <h3 style="color:pink;">${choices[i]}</h3><input class="answer-input" id="user-answer-${currentQ}" type="checkbox" placeholder="Enter your answer here..."/>
+            `;
+
+            // Apend new div in the answer area
+            ansArea.appendChild(div);
+        }
     }

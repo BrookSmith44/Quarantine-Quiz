@@ -77,6 +77,7 @@ io.on('connection', socket => {
         const user = getCurrentUser(socket.id);
         collectRounds(socket.id, user.username, roundArr);
         const getRound = getRounds();
+        console.log(getRound);
         io.emit('numOfRounds', {
             numOfRounds: getRound.length
         });
@@ -98,9 +99,7 @@ io.on('connection', socket => {
     socket.on('getRound', () => {
         const rounds = getRounds();
         // Send rounds to frontend
-        io.emit('sendRound', {
-            rounds: rounds
-        });
+        socket.emit('sendRound', (rounds));
     });
 
     // Run when user disconnects
@@ -125,6 +124,6 @@ io.on('connection', socket => {
     });
 });
 
-const port = 3000 || process.env.port;
+const port = 8080 || process.env.port;
 
 server.listen(port, () => console.log(`Server running on port: ${port}`));

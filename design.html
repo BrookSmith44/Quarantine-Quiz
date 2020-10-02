@@ -8,6 +8,7 @@
 </head>
 <body>
     <div id="index-wrapper">
+        <!--- CREATE ROUND DESIGN
         <div id="create-container">
             <form id="create-round">
                 <h1>Create Round</h1>
@@ -31,7 +32,16 @@
                     <button id="btnAdd" class="btn" >+</button>
                 </div>
             </form>
-          </div>
+          </div> -->
+          <div class="quiz-container" id="quiz-container">
+            <form class="vote-question-form" id="vote-question-${currentQ}">
+                <h2>${question}</h2>
+                <input class="answer-input" id="user-answer-${currentQ}" type="text" placeholder="Enter your answer here..."/>
+                <div id="quizbtns">
+                    <button class="btn">Submit</button>
+                </div>
+            </form>
+        </div>
     </div>
 </body>
 </html>

@@ -38,8 +38,10 @@
   }
   
   .userForm h2 {
-    width: 20%;
-    align-self: center;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 2em;
     color: pink;
   }
@@ -262,7 +264,7 @@
 }
 
   .questionInput, .answer-input {
-    width: 80%;
+    width: 100%;
     border-bottom: 2px solid pink;
     font-size: 1.1em;
     margin-bottom: 5%;
@@ -340,6 +342,35 @@
   /* Quiz */
   #quiz-container {
     height: 50%;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #quiz-container form {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #quiz-container form h2  {
+    margin-left: 2%;
+  }
+
+  #quizbtns {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+  }
+
+  #quizbtns button {
+    margin-right: 2%;
+  }
+
+  #ansArea {
+    width: 100%;
   }
 
   /* Show number arrows always */
