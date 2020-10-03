@@ -292,7 +292,7 @@ function userLobby()
     });
 
     socket.on('startCountdown', () => {
-        outputQuizStart(10000);
+        outputQuizStart(1000);
     });
 
     // Create round button
@@ -742,29 +742,50 @@ function createNumOfChoices(element, type) {
         // Add answer input for multiple answers
         // get answer area div
         const ansArea = document.getElementById('ansArea');
+
+        // create div 
+        const div = document.createElement('Div');
+        // Set inner HTML for the div
+        div.innerHTML = `
+        <label for="choice-options">Answer Options</label><select id="choice-options" class="choice-options" name="options"></select>
+        `;
+
+        // append div of answer area
+        ansArea.appendChild(div);
+        // Get select element by ID
+        const select = document.getElementById('choice-options');
+        console.log(select);
         
         // Loop to create correct amount of answer inputs
         for (i = 0; i < multChoiceNum; i++) {
-            const div = document.createElement('Div');
-            div.setAttribute('style', 'width: 100%; display: flex; flex-direction: row');
-            // Set inner HTML for answer area
-            div.innerHTML = `
-            <h3 style="color:pink;">${choices[i]}</h3><input class="answer-input" id="user-answer-${currentQ}" type="checkbox" placeholder="Enter your answer here..."/>
-            `;
+            // Create select element
+            const opt = document.createElement('Option');
+            // Set the option value to the current index
+            opt.value = choices[i];
+            // Set innerHTML to the current value of the array
+            opt.innerHTML = choices[i];
 
             // Apend new div in the answer area
-            ansArea.appendChild(div);
-
-            // Listen for when user clicks question submit button
-            quizSubmit.addEventListener('submit', (e) => {
-                // Prevent page from refreshing
-                e.preventDefault();
-
-                const answer = answerInput.value;
-
-                console.log('Submit answer', answer);
-
-
-            });
+            ansArea.appendChild(select);
+            // Append option of the select element
+            select.appendChild(opt);
         }
+
+
+        // Get quiz button element
+        const quizSubmit = document.getElementById(`vote-question-${currentQ}`);
+
+        // Listen for when user clicks question submit button
+        quizSubmit.addEventListener('submit', (e) => {
+            // Prevent page from refreshing
+            e.preventDefault();
+
+            alert(select.options[select.selectedIndex].text);
+
+            const answer = select.options[select.selectedIndex].text;
+
+            console.log('Submit answer', answer);
+
+
+        });   
     }
