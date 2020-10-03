@@ -602,6 +602,8 @@ function createNumOfChoices(element, type) {
         questionDiv.setAttribute('style', 'width:100%; display:flex; justify-content:center; align-items:center;');
         // Get quiz containter by id 
         const quizContainer = document.getElementById('quiz-container');
+        // Create a array for user answers
+        let userAnswers = [];
 
         const countdownDiv = document.createElement('Div');
 
@@ -633,7 +635,8 @@ function createNumOfChoices(element, type) {
 
             console.log('Submit answer', answer);
 
-
+            // push user answer into array
+            userAnswers.push(answer);
         });
     }
 
@@ -645,6 +648,8 @@ function createNumOfChoices(element, type) {
         questionDiv.setAttribute('style', 'width:100%; display:flex; justify-content:center; align-items:center;');
         // Get quiz containter by id 
         const quizContainer = document.getElementById('quiz-container');
+        // Create empty array for user answers
+        let userAnswers = [];
 
         const countdownDiv = document.createElement('Div');
 
@@ -671,15 +676,41 @@ function createNumOfChoices(element, type) {
         for (i = 0; i < multAnsNum; i++) {
             const div = document.createElement('Div');
             div.setAttribute('style', 'width: 100%; display: flex; flex-direction: row');
-            const divNum = i+ 1;
+            const divNum = i + 1;
             // Set inner HTML for answer area
             div.innerHTML = `
-            <h3 style="color:pink;">${divNum}: </h3><input class="answer-input" id="user-answer-${currentQ}" type="text" placeholder="Enter your answer here..."/>
+            <h3 style="color:pink;">${divNum}: </h3><input class="answer-input" id="user-answer-${i}" type="text" placeholder="Enter your answer here..."/>
             `;
 
             // Apend new div in the answer area
             ansArea.appendChild(div);
+
         }
+
+        // Get quiz button element
+        const quizSubmit = document.getElementById(`vote-question-${currentQ}`);
+
+        // Listen for when user clicks question submit button
+        quizSubmit.addEventListener('submit', (e) => {
+            // Prevent page from refreshing
+            e.preventDefault();
+
+            // Loop through answers given by user
+            for (i = 0; i < multAnsNum; i++) {
+                // Get the answer input
+                const answerInput = document.getElementById(`user-answer-${i}`);
+
+                const answer = answerInput.value;
+
+                console.log('Submit answer', answer);
+
+                userAnswers.push(answer);
+            }
+
+            alert(userAnswers);
+            
+        });
+        
     }
 
     // Function To Display Multiple Choice Question
@@ -723,5 +754,17 @@ function createNumOfChoices(element, type) {
 
             // Apend new div in the answer area
             ansArea.appendChild(div);
+
+            // Listen for when user clicks question submit button
+            quizSubmit.addEventListener('submit', (e) => {
+                // Prevent page from refreshing
+                e.preventDefault();
+
+                const answer = answerInput.value;
+
+                console.log('Submit answer', answer);
+
+
+            });
         }
     }
